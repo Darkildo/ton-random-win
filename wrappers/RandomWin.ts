@@ -1,17 +1,22 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, Dictionary } from '@ton/core';
 
 export type RandomWinConfig = {
-    id: number;
-    counter: number;
+    owner: Address;
+    fee: number;
 };
 
 export function randomWinConfigToCell(config: RandomWinConfig): Cell {
-    return beginCell().storeUint(config.id, 32).storeUint(config.counter, 32).endCell();
+    return beginCell()
+        .storeAddress(config.owner)
+        .storeUint(config.fee, 16)
+        .storeDict(Dictionary.empty())
+        .endCell();
 }
 
 export const Opcodes = {
-    OP_INCREASE: 0x7e8764ef,
-    OP_RESET: 0x3a752f06,
+    OP_LUCK_ROLL: 0x0f8a7ea5,
+    OP_PAY_REWARD: 0x2f8170a5,
+    OP_CREATE_DRAW: 0x2f8110a1,
 };
 
 export class RandomWin implements Contract {
@@ -35,51 +40,84 @@ export class RandomWin implements Contract {
         });
     }
 
-    async sendIncrease(
+    async sendCreateDraw(
         provider: ContractProvider,
         via: Sender,
         opts: {
-            increaseBy: number;
+            queryId: bigint;
+            drawId: number;
+            minEntryAmount: bigint;
+            keyLength: bigint;
             value: bigint;
-            queryID?: number;
         }
     ) {
         await provider.internal(via, {
             value: opts.value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell()
-                .storeUint(Opcodes.OP_INCREASE, 32)
-                .storeUint(opts.queryID ?? 0, 64)
-                .storeUint(opts.increaseBy, 32)
+                .storeUint(Opcodes.OP_CREATE_DRAW, 32)
+                .storeUint(opts.queryId, 64)
+                .storeUint(opts.drawId, 32)
+                .storeCoins(opts.minEntryAmount)
+                .storeUint(opts.keyLength, 256)
                 .endCell(),
         });
     }
 
-    async sendReset(
+    async sendLuckRoll(
         provider: ContractProvider,
         via: Sender,
         opts: {
+            queryId: bigint;
+            drawId: number;
+            answer: bigint;
             value: bigint;
-            queryID?: number;
         }
     ) {
         await provider.internal(via, {
             value: opts.value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell()
-                .storeUint(Opcodes.OP_RESET, 32)
-                .storeUint(opts.queryID ?? 0, 64)
+                .storeUint(Opcodes.OP_LUCK_ROLL, 32)
+                .storeUint(opts.queryId, 64)
+                .storeUint(opts.drawId, 32)
+                .storeUint(opts.answer, 256)
                 .endCell(),
         });
     }
 
-    async getCounter(provider: ContractProvider) {
-        const result = await provider.get('currentCounter', []);
-        return result.stack.readNumber();
+    async sendPayReward(
+        provider: ContractProvider,
+        via: Sender,
+        opts: {
+            queryId: bigint;
+            drawId: number;
+            winner: Address;
+            hash?: Cell;
+            value: bigint;
+        }
+    ) {
+        await provider.internal(via, {
+            value: opts.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(Opcodes.OP_PAY_REWARD, 32)
+                .storeUint(opts.queryId, 64)
+                .storeUint(opts.drawId, 32)
+                .storeAddress(opts.winner)
+                .storeMaybeRef(opts.hash)
+                .endCell(),
+        });
     }
 
-    async getID(provider: ContractProvider) {
-        const result = await provider.get('initialId', []);
-        return result.stack.readNumber();
+    async getOwner(provider: ContractProvider): Promise<Address> {
+        const result = await provider.get('get_owner', []);
+        return result.stack.readAddress();
+    }
+
+    async getDraw(provider: ContractProvider, drawId: number) {
+        const result = await provider.get('get_draw', [{ type: 'int', value: BigInt(drawId) }]);
+        // Assuming it returns the draw data
+        return result.stack;
     }
 }
