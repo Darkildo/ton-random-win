@@ -1,10 +1,11 @@
+import "models"
+
 tolk 1.1
 
 struct Storage {
-    id: uint32
-    tonAmountToRoll: coins
     owner: address
-    hash: bytes128?
+    fee: uint16
+    drawDict: dict<uint32, Draw>
 }
 
 fun Storage.load() {

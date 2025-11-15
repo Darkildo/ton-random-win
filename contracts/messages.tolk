@@ -6,11 +6,18 @@ type ForwardPayloadRemainder = RemainingBitsAndRefs
 
 struct (0x0f8a7ea5) LuckRoll {
     queryId: uint64
-    value: uint256
+    drawId: uint32
+    answer: uint256
 }
 
 struct (0x2f8170a5) PayReward {
     queryId: uint64
     winner: address
     hash: bytes128?
+}
+
+struct (0x2f8110a1) CreateDraw {
+    queryId: uint64
+    minEntryAmount: coins
+    keyLength: uint256
 }
