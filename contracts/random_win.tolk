@@ -8,9 +8,11 @@ type AllowedMessage = LuckRoll | PayReward | CreateDraw
 fun onInternalMessage(in: InMessage) {
     val msg = lazy AllowedMessage.fromSlice(in.body);
     var storage = lazy Storage.load();
-    var drawResult = storage.drawMap.get(msg.drawId);
+
     match (msg) {
         LuckRoll => {
+            var drawResult = storage.drawMap.get(msg.drawId);
+
             if (!drawResult.isFound) {
                 throw ERROR_DRAW_NOT_FOUND;
             }
@@ -26,6 +28,8 @@ fun onInternalMessage(in: InMessage) {
             }
         }
         PayReward => {
+            var drawResult = storage.drawMap.get(msg.drawId);
+
             if (in.senderAddress != storage.owner) {
                 throw ERROR_NOT_OWNER;
             }
@@ -36,13 +40,20 @@ fun onInternalMessage(in: InMessage) {
 
             var draw = drawResult.loadValue();
 
-            if (msg.hash != draw.hash) {
+            if (msg.hash == null || draw.hash == null) {
+                throw ERROR_VALIDATION_HASH_NOT_SET;
+            }
+
+            msg.hash.beginParse().bitsEqual(draw.hash.beginParse());
+            {
                 throw ERROR_INVALID_HASH;
             }
 
             storage.save();
         }
         CreateDraw => {
+            var drawResult = storage.drawMap.get(msg.drawId);
+
             if (drawResult.isFound) {
                 throw ERROR_DRAW_ALREADY_EXISTS;
             }

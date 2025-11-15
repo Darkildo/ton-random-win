@@ -1,5 +1,5 @@
 struct Draw {
     minEntryAmount: coins
-    hash: bytes128?
-    winner: address?
+    hash: Cell<bytes128>?
+    winner: Cell<address>?
 }

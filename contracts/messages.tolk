@@ -8,7 +8,7 @@ struct (0x2f8170a5) PayReward {
     queryId: uint64
     drawId: uint32
     winner: address
-    hash: bytes128?
+    hash: Cell<bytes128>?
 }
 
 struct (0x2f8110a1) CreateDraw {
@@ -17,5 +17,3 @@ struct (0x2f8110a1) CreateDraw {
     minEntryAmount: coins
     keyLength: uint256
 }
-
-struct BaseQuery {}
