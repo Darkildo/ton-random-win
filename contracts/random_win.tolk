@@ -3,7 +3,7 @@ import "messages"
 import "models"
 import "storage"
 
-type AllowedMessage = LuckRoll | PayReward | CreateDraw
+type AllowedMessage = LuckRoll | PayReward | CreateDraw | SetWinHash
 
 fun onInternalMessage(in: InMessage) {
     val msg = lazy AllowedMessage.fromSlice(in.body);
@@ -26,6 +26,9 @@ fun onInternalMessage(in: InMessage) {
             if (draw.winner != null) {
                 throw ERROR_WINNER_ALREADY_FINDED;
             }
+        }
+        SetWinHash => {
+            //TODO: implement me daddy
         }
         PayReward => {
             var drawResult = storage.drawMap.get(msg.drawId);
