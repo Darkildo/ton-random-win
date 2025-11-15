@@ -8,15 +8,14 @@ type AllowedMessage = LuckRoll | PayReward | CreateDraw
 fun onInternalMessage(in: InMessage) {
     val msg = lazy AllowedMessage.fromSlice(in.body);
     var storage = lazy Storage.load();
+    var drawResult = storage.drawMap.get(msg.drawId);
     match (msg) {
         LuckRoll => {
-            var drawMap = storage.drawMap.get(msg.drawId);
-
-            if (!drawMap.isFound) {
+            if (!drawResult.isFound) {
                 throw ERROR_DRAW_NOT_FOUND;
             }
 
-            var draw = drawMap.loadValue();
+            var draw = drawResult.loadValue();
 
             if (draw.minEntryAmount > in.valueCoins) {
                 throw ERROR_INVALID_TON_AMOUNT_TO_ROLL;
@@ -31,14 +30,20 @@ fun onInternalMessage(in: InMessage) {
                 throw ERROR_NOT_OWNER;
             }
 
-            if (msg.hash != storage.hash) {
+            if (!drawResult.isFound) {
+                throw ERROR_DRAW_NOT_FOUND;
+            }
+
+            var draw = drawResult.loadValue();
+
+            if (msg.hash != draw.hash) {
                 throw ERROR_INVALID_HASH;
             }
+
+            storage.save();
         }
         CreateDraw => {
-            var drawMap = storage.drawMap.uDictGet(sizeof(msg.drawId), msg.drawId);
-
-            if (drawMap.1) {
+            if (drawResult.isFound) {
                 throw ERROR_DRAW_ALREADY_EXISTS;
             }
             var draw = Draw {
@@ -47,7 +52,7 @@ fun onInternalMessage(in: InMessage) {
                 winner: null,
             };
 
-            storage.drawMap.iDictSet(sizeof(msg.drawId), msg.drawId, draw);
+            storage.drawMap.set(msg.drawId, draw);
 
             storage.save();
         }
