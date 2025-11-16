@@ -61,7 +61,7 @@ export class RandomWin implements Contract {
                 .storeUint(opts.queryId, 64)
                 .storeUint(opts.drawId, 32)
                 .storeCoins(opts.minEntryAmount)
-                .storeUint(opts.keyLength, 256)
+                .storeUint(opts.keyLength, 8)
                 .endCell(),
         });
     }
