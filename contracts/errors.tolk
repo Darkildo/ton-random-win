@@ -1,5 +1,5 @@
 
-// const ERROR_INVALID_OP = 72
+const ERROR_INVALID_OP = 72
 const ERROR_WRONG_OP = 0xffff
 const ERROR_NOT_OWNER = 73
 // const ERROR_NOT_VALID_WALLET = 74

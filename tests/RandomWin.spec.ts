@@ -214,9 +214,6 @@ describe('RandomWin', () => {
                 value: toNano('2'),
             });
 
-            var data = await randomWin.getDraw(1)
-            console.log("check this:", data)
-
             expect(result.transactions).toHaveTransaction({
                 from: roller.address,
                 to: randomWin.address,
@@ -232,7 +229,7 @@ describe('RandomWin', () => {
                     queryId: BigInt(1),
                     drawId: 1,
                     minEntryAmount: toNano('1'),
-                    keyLength: BigInt(256),
+                    keyLength: keyLength,
                     value: toNano('0.05'),
                 });
             });
@@ -298,7 +295,7 @@ describe('RandomWin', () => {
                         queryId: BigInt(1),
                         drawId: 1,
                         minEntryAmount: toNano('1'),
-                        keyLength: BigInt(256),
+                        keyLength: keyLength,
                         value: toNano('0.05'),
                     });
 
@@ -307,7 +304,7 @@ describe('RandomWin', () => {
                         queryId: BigInt(2),
                         drawId: 2,
                         minEntryAmount: toNano('2'),
-                        keyLength: BigInt(256),
+                        keyLength: keyLength,
                         value: toNano('0.05'),
                     });
 
@@ -316,7 +313,7 @@ describe('RandomWin', () => {
                     await randomWin.sendLuckRoll(roller1.getSender(), {
                         queryId: BigInt(3),
                         drawId: 1,
-                        answer: BigInt(123),
+                        answer: keyLength,
                         value: toNano('2'),
                     });
 
@@ -325,7 +322,7 @@ describe('RandomWin', () => {
                     await randomWin.sendLuckRoll(roller2.getSender(), {
                         queryId: BigInt(4),
                         drawId: 2,
-                        answer: BigInt(456),
+                        answer: keyLength,
                         value: toNano('3'),
                     });
 
@@ -380,7 +377,7 @@ describe('RandomWin', () => {
                         from: deployer.address,
                         to: randomWin.address,
                         success: false,
-                        exitCode: 449, // ERROR_WRONG_OP
+                        exitCode: 0xffff, // ERROR_INVALID_OP
                     });
                 });
             });
@@ -405,7 +402,7 @@ describe('RandomWin', () => {
                         queryId: BigInt(1),
                         drawId: 1,
                         minEntryAmount: toNano('1'),
-                        keyLength: BigInt(256),
+                        keyLength: keyLength,
                         value: toNano('0.05'),
                     });
                 });

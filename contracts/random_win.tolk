@@ -93,9 +93,8 @@ fun onInternalMessage(in: InMessage) {
         TopUpTons => {
             return;
         }
-
         else => {
-            assert (in.body.isEmpty()) throw ERROR_WRONG_OP;
+            throw ERROR_WRONG_OP;
         }
     }
 }
