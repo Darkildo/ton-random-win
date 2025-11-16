@@ -1,4 +1,4 @@
-import { toNano } from '@ton/core';
+import { Dictionary, toNano } from '@ton/core';
 import { RandomWin } from '../wrappers/RandomWin';
 import { compile, NetworkProvider } from '@ton/blueprint';
 
@@ -10,6 +10,7 @@ export async function run(provider: NetworkProvider) {
 
                 owner: adminWallet,
                 fee: 0,
+                drawMap: Dictionary.empty(),
             },
             await compile('RandomWin')
         )

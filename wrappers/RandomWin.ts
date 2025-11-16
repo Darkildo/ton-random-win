@@ -40,7 +40,7 @@ export function randomWinConfigToCell(config: RandomWinConfig): Cell {
 
 
 export const Opcodes = {
-    OP_LUCK_ROLL: 0x0f8a7ea5,
+    OP_LUCK_ROLL: 0x0f1a3ea5,
     OP_PAY_REWARD: 0x2f8170a5,
     OP_CREATE_DRAW: 0x7e8764ef,
     OP_SET_WIN_HASH: 0x2f8116a1,
