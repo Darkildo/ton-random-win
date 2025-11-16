@@ -1,22 +1,48 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, Dictionary } from '@ton/core';
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, Dictionary, DictionaryValue } from '@ton/core';
+
+
+
+export type Draw = {
+    minEntryAmount: bigint;
+    hash?: Cell;
+    winner?: Cell;
+};
 
 export type RandomWinConfig = {
     owner: Address;
     fee: number;
+    drawMap: Dictionary<number, Draw>;
+};
+
+var DrawValue: DictionaryValue<Draw> = {
+    serialize: (src: Draw, builder) => {
+        builder.storeCoins(src.minEntryAmount);
+        builder.storeMaybeRef(src.hash);
+        builder.storeMaybeRef(src.winner);
+    },
+
+    parse: (src) => {
+        return {
+            minEntryAmount: src.loadCoins(),
+            hash: src.loadMaybeRef() ?? undefined,
+            winner: src.loadMaybeRef() ?? undefined,
+        };
+    },
 };
 
 export function randomWinConfigToCell(config: RandomWinConfig): Cell {
     return beginCell()
         .storeAddress(config.owner)
         .storeUint(config.fee, 16)
-        .storeDict(Dictionary.empty())
+        .storeDict(config.drawMap, Dictionary.Keys.Uint(32), DrawValue)
         .endCell();
 }
+
 
 export const Opcodes = {
     OP_LUCK_ROLL: 0x0f8a7ea5,
     OP_PAY_REWARD: 0x2f8170a5,
-    OP_CREATE_DRAW: 0xd372118a,
+    OP_CREATE_DRAW: 0x7e8764ef,
     OP_SET_WIN_HASH: 0x2f8116a1,
     TOP_UP: 0xd372158c,
 };
@@ -46,7 +72,7 @@ export class RandomWin implements Contract {
         provider: ContractProvider,
         via: Sender,
         opts: {
-            queryId: bigint;
+            queryId: number;
             drawId: number;
             minEntryAmount: bigint;
             keyLength: bigint;

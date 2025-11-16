@@ -1,5 +1,5 @@
 import { Blockchain, SandboxContract, SendMessageResult, TreasuryContract } from '@ton/sandbox';
-import { Cell, toNano, beginCell } from '@ton/core';
+import { Cell, toNano, beginCell, Dictionary } from '@ton/core';
 import { RandomWin } from '../wrappers/RandomWin';
 import '@ton/test-utils';
 import { compile } from '@ton/blueprint';
@@ -26,6 +26,7 @@ describe('RandomWin', () => {
                 {
                     owner: deployer.address,
                     fee: 1,
+                    drawMap: Dictionary.empty(),
                 },
                 code
             )
@@ -50,58 +51,58 @@ describe('RandomWin', () => {
         });
     });
 
-    // describe('CreateDraw', () => {
-    //     it('should create a new draw successfully', async () => {
-    //         const drawId = 1;
-    //         const minEntryAmount = toNano('1');
-    //         const keyLength = BigInt(256);
+    describe('CreateDraw', () => {
+        it('should create a new draw successfully', async () => {
+            const drawId = 10;
+            const minEntryAmount = toNano('1');
+            const keyLength = BigInt(255);
 
-    //         const result = await randomWin.sendCreateDraw(deployer.getSender(), {
-    //             queryId: BigInt(1),
-    //             drawId,
-    //             minEntryAmount,
-    //             keyLength,
-    //             value: toNano('0.05'),
-    //         });
+            const result = await randomWin.sendCreateDraw(deployer.getSender(), {
+                queryId: 242342,
+                drawId,
+                minEntryAmount,
+                keyLength,
+                value: toNano('0.05'),
+            });
 
-    //         expect(result.transactions).toHaveTransaction({
-    //             from: deployer.address,
-    //             to: randomWin.address,
-    //             success: true,
-    //         });
-    //     });
+            expect(result.transactions).toHaveTransaction({
+                from: deployer.address,
+                to: randomWin.address,
+                success: true,
+            });
+        });
 
-    //     it('should fail when draw already exists', async () => {
-    //         const drawId = 1;
-    //         const minEntryAmount = toNano('1');
-    //         const keyLength = BigInt(256);
+        // it('should fail when draw already exists', async () => {
+        //     const drawId = 10;
+        //     const minEntryAmount = toNano('1');
+        //     const keyLength = BigInt(256);
 
-    //         // Create first
-    //         await randomWin.sendCreateDraw(deployer.getSender(), {
-    //             queryId: BigInt(1),
-    //             drawId,
-    //             minEntryAmount,
-    //             keyLength,
-    //             value: toNano('0.05'),
-    //         });
+        //     // Create first
+        //     await randomWin.sendCreateDraw(deployer.getSender(), {
+        //         queryId: BigInt(1),
+        //         drawId,
+        //         minEntryAmount,
+        //         keyLength,
+        //         value: toNano('0.05'),
+        //     });
 
-    //         // Try to create again
-    //         const result = await randomWin.sendCreateDraw(deployer.getSender(), {
-    //             queryId: BigInt(2),
-    //             drawId,
-    //             minEntryAmount,
-    //             keyLength,
-    //             value: toNano('0.05'),
-    //         });
+        //     // Try to create again
+        //     const result = await randomWin.sendCreateDraw(deployer.getSender(), {
+        //         queryId: BigInt(2),
+        //         drawId,
+        //         minEntryAmount,
+        //         keyLength,
+        //         value: toNano('0.05'),
+        //     });
 
-    //         expect(result.transactions).toHaveTransaction({
-    //             from: deployer.address,
-    //             to: randomWin.address,
-    //             success: false,
-    //             exitCode: 1004, // ERROR_DRAW_ALREADY_EXISTS
-    //         });
-    //     });
-    // });
+        //     expect(result.transactions).toHaveTransaction({
+        //         from: deployer.address,
+        //         to: randomWin.address,
+        //         success: false,
+        //         exitCode: 1004, // ERROR_DRAW_ALREADY_EXISTS
+        //     });
+        // });
+    });
 
     // describe('LuckRoll', () => {
     //     beforeEach(async () => {
