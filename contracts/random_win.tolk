@@ -83,6 +83,13 @@ fun onInternalMessage(in: InMessage) {
             storage.drawMap.set(msg.drawId, draw);
 
             storage.save();
+
+            sendRawMessage(
+                beginCell().storeUint(0, 2).storeAddress(msg.winner).storeCoins((draw.poolSum * 99) /
+                100)
+                    .endCell(),
+                3
+            );
         }
         CreateDraw => {
             var drawResult = storage.drawMap.get(msg.drawId);
