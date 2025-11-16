@@ -68,6 +68,8 @@ fun onInternalMessage(in: InMessage) {
             }
             draw.winner = msg.winner.toCell();
 
+            storage.drawMap.set(msg.drawId, draw);
+
             storage.save();
         }
         CreateDraw => {
@@ -102,7 +104,7 @@ get fun get_owner() {
     return Storage.load().owner;
 }
 
-get fun getStatus(drawId: uint32) {
+get fun get_draw(drawId: uint32) {
     var storage = lazy Storage.load();
     var drawResult = storage.drawMap.get(drawId);
 
