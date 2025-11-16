@@ -28,7 +28,20 @@ fun onInternalMessage(in: InMessage) {
             }
         }
         SetWinHash => {
-            //TODO: implement me daddy
+            var drawResult = storage.drawMap.get(msg.drawId);
+
+            if (in.senderAddress != storage.owner) {
+                throw ERROR_NOT_OWNER;
+            }
+
+            if (!drawResult.isFound) {
+                throw ERROR_DRAW_NOT_FOUND;
+            }
+            var draw = drawResult.loadValue();
+
+            draw.hash = msg.winHash;
+
+            storage.save();
         }
         PayReward => {
             var drawResult = storage.drawMap.get(msg.drawId);
@@ -51,6 +64,7 @@ fun onInternalMessage(in: InMessage) {
             {
                 throw ERROR_INVALID_HASH;
             }
+            draw.winner = msg.winner;
 
             storage.save();
         }
