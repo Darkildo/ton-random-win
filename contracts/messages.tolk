@@ -1,4 +1,4 @@
-struct (0x0f8a7ea5) LuckRoll {
+struct (0x0f1a3ea5) LuckRoll {
     queryId: uint64
     drawId: uint32
     answer: uint256
