@@ -72,7 +72,7 @@ export class RandomWin implements Contract {
         provider: ContractProvider,
         via: Sender,
         opts: {
-            queryId: number;
+            queryId: bigint;
             drawId: number;
             minEntryAmount: bigint;
             keyLength: bigint;
