@@ -22,3 +22,4 @@ struct (0x2f8110a1) SetWinHash {
     drawId: uint32
     winHash: Cell<bytes128>
 }
+struct (0xd372158c) TopUpTons {}

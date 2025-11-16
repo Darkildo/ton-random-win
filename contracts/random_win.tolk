@@ -3,7 +3,7 @@ import "messages"
 import "models"
 import "storage"
 
-type AllowedMessage = LuckRoll | PayReward | CreateDraw | SetWinHash
+type AllowedMessage = LuckRoll | PayReward | CreateDraw | SetWinHash | TopUpTons
 
 fun onInternalMessage(in: InMessage) {
     val msg = lazy AllowedMessage.fromSlice(in.body);
@@ -84,11 +84,22 @@ fun onInternalMessage(in: InMessage) {
 
             storage.save();
         }
+        TopUpTons => {}
 
         else => {
-            assert (in.body.isEmpty()) throw ERROR_WRONG_OP;
+            // assert (in.body.isEmpty()) throw ERROR_WRONG_OP;
         }
     }
 }
 
 fun onBouncedMessage(in: InMessageBounced) {}
+
+get fun getStatus(drawId: uint32) {
+    var storage = lazy Storage.load();
+    var drawResult = storage.drawMap.get(drawId);
+
+    if (!drawResult.isFound) {
+        return null;
+    }
+    return drawResult.loadValue();
+}
