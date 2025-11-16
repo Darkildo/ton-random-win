@@ -17,6 +17,7 @@ export const Opcodes = {
     OP_LUCK_ROLL: 0x0f8a7ea5,
     OP_PAY_REWARD: 0x2f8170a5,
     OP_CREATE_DRAW: 0x2f8110a1,
+    OP_SET_WIN_HASH: 0x2f8110a1, // Same as CreateDraw, distinguished by struct
 };
 
 export class RandomWin implements Contract {
@@ -106,6 +107,28 @@ export class RandomWin implements Contract {
                 .storeUint(opts.drawId, 32)
                 .storeAddress(opts.winner)
                 .storeMaybeRef(opts.hash)
+                .endCell(),
+        });
+    }
+
+    async sendSetWinHash(
+        provider: ContractProvider,
+        via: Sender,
+        opts: {
+            queryId: bigint;
+            drawId: number;
+            winHash: Cell;
+            value: bigint;
+        }
+    ) {
+        await provider.internal(via, {
+            value: opts.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(Opcodes.OP_SET_WIN_HASH, 32)
+                .storeUint(opts.queryId, 64)
+                .storeUint(opts.drawId, 32)
+                .storeRef(opts.winHash)
                 .endCell(),
         });
     }

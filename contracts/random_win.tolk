@@ -64,7 +64,7 @@ fun onInternalMessage(in: InMessage) {
             {
                 throw ERROR_INVALID_HASH;
             }
-            draw.winner = msg.winner;
+            draw.winner = msg.winner.toCell();
 
             storage.save();
         }
