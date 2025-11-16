@@ -29,6 +29,12 @@ fun onInternalMessage(in: InMessage) {
             if (draw.winner != null) {
                 throw ERROR_WINNER_ALREADY_FINDED;
             }
+
+            draw.poolSum += in.valueCoins;
+
+            storage.drawMap.set(msg.drawId, draw);
+
+            storage.save();
         }
         SetWinHash => {
             var drawResult = storage.drawMap.get(msg.drawId);
@@ -65,6 +71,10 @@ fun onInternalMessage(in: InMessage) {
                 throw ERROR_VALIDATION_HASH_NOT_SET;
             }
 
+            if (draw.winner != null) {
+                throw ERROR_WINNER_ALREADY_PAYED;
+            }
+
             if (!msg.hash.beginParse().bitsEqual(draw.hash.beginParse())) {
                 throw ERROR_INVALID_HASH;
             }
@@ -84,6 +94,7 @@ fun onInternalMessage(in: InMessage) {
                 minEntryAmount: msg.minEntryAmount,
                 hash: null,
                 winner: null,
+                poolSum: in.valueCoins,
             };
 
             storage.drawMap.set(msg.drawId, draw);
