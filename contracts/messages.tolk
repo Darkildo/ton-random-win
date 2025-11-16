@@ -15,7 +15,7 @@ struct (0xd372118a) CreateDraw {
     queryId: uint64
     drawId: uint32
     minEntryAmount: coins
-    keyLength: uint256
+    keyLength: uint8
 }
 struct (0x2f8116a1) SetWinHash {
     queryId: uint64
