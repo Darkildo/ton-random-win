@@ -189,6 +189,15 @@ describe('RandomWin', () => {
 
             // Pay reward to set winner
             const hash = beginCell().storeUint(123, 256).endCell();
+
+
+            await randomWin.sendSetWinHash(deployer.getSender(), {
+                queryId: BigInt(2),
+                drawId: 1,
+                winHash: hash,
+                value: toNano('0.05'),
+            })
+
             await randomWin.sendPayReward(deployer.getSender(), {
                 queryId: BigInt(2),
                 drawId: 1,
@@ -206,7 +215,7 @@ describe('RandomWin', () => {
             });
 
             var data = await randomWin.getDraw(1)
-            console.log("check this: " + data)
+            console.log("check this:", data)
 
             expect(result.transactions).toHaveTransaction({
                 from: roller.address,

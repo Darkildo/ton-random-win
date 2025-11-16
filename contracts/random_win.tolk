@@ -44,6 +44,8 @@ fun onInternalMessage(in: InMessage) {
 
             draw.hash = msg.winHash;
 
+            storage.drawMap.set(msg.drawId, draw);
+
             storage.save();
         }
         PayReward => {
