@@ -11,7 +11,7 @@ struct (0x2f8170a5) PayReward {
     hash: Cell<bytes128>?
 }
 
-struct (0xd372118a) CreateDraw {
+struct (0x7e8764ef) CreateDraw {
     queryId: uint64
     drawId: uint32
     minEntryAmount: coins
