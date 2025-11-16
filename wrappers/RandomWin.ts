@@ -16,12 +16,13 @@ export function randomWinConfigToCell(config: RandomWinConfig): Cell {
 export const Opcodes = {
     OP_LUCK_ROLL: 0x0f8a7ea5,
     OP_PAY_REWARD: 0x2f8170a5,
-    OP_CREATE_DRAW: 0x2f8110a1,
-    OP_SET_WIN_HASH: 0x2f8110a1, // Same as CreateDraw, distinguished by struct
+    OP_CREATE_DRAW: 0xd372118a,
+    OP_SET_WIN_HASH: 0x2f8116a1,
+    TOP_UP: 0xd372158c,
 };
 
 export class RandomWin implements Contract {
-    constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
+    constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) { }
 
     static createFromAddress(address: Address) {
         return new RandomWin(address);

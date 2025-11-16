@@ -6,6 +6,9 @@ import "storage"
 type AllowedMessage = LuckRoll | PayReward | CreateDraw | SetWinHash | TopUpTons
 
 fun onInternalMessage(in: InMessage) {
+    if (in.body.isEmpty()) {
+        return;
+    }
     val msg = lazy AllowedMessage.fromSlice(in.body);
     var storage = lazy Storage.load();
 
@@ -60,8 +63,7 @@ fun onInternalMessage(in: InMessage) {
                 throw ERROR_VALIDATION_HASH_NOT_SET;
             }
 
-            msg.hash.beginParse().bitsEqual(draw.hash.beginParse());
-            {
+            if (!msg.hash.beginParse().bitsEqual(draw.hash.beginParse())) {
                 throw ERROR_INVALID_HASH;
             }
             draw.winner = msg.winner.toCell();
@@ -84,15 +86,21 @@ fun onInternalMessage(in: InMessage) {
 
             storage.save();
         }
-        TopUpTons => {}
+        TopUpTons => {
+            return;
+        }
 
         else => {
-            // assert (in.body.isEmpty()) throw ERROR_WRONG_OP;
+            assert (in.body.isEmpty()) throw ERROR_WRONG_OP;
         }
     }
 }
 
 fun onBouncedMessage(in: InMessageBounced) {}
+
+get fun get_owner() {
+    return Storage.load().owner;
+}
 
 get fun getStatus(drawId: uint32) {
     var storage = lazy Storage.load();

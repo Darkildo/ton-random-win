@@ -11,13 +11,13 @@ struct (0x2f8170a5) PayReward {
     hash: Cell<bytes128>?
 }
 
-struct (0x2f8110a1) CreateDraw {
+struct (0xd372118a) CreateDraw {
     queryId: uint64
     drawId: uint32
     minEntryAmount: coins
     keyLength: uint256
 }
-struct (0x2f8110a1) SetWinHash {
+struct (0x2f8116a1) SetWinHash {
     queryId: uint64
     drawId: uint32
     winHash: Cell<bytes128>

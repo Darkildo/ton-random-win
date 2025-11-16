@@ -3,11 +3,13 @@ import { RandomWin } from '../wrappers/RandomWin';
 import { compile, NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
+    const adminWallet = await provider.ui().inputAddress("get admin address");
     const randomWin = provider.open(
         RandomWin.createFromConfig(
             {
-                id: Math.floor(Math.random() * 10000),
-                counter: 0,
+
+                owner: adminWallet,
+                fee: 0,
             },
             await compile('RandomWin')
         )
@@ -17,5 +19,5 @@ export async function run(provider: NetworkProvider) {
 
     await provider.waitForDeploy(randomWin.address);
 
-    console.log('ID', await randomWin.getID());
+    console.log('ID', await randomWin.getDraw(0));
 }
